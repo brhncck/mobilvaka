@@ -63,30 +63,25 @@ export default function Form({
                 setValue={handleChange("country")}
             />
 
-            <ErrorTextInput isClickedSubmit={isClickedSubmit} errorMessage={errors.country} />
-
             {cities && (
-                <>
-                    <DefaultDropDown
-                        label={"İl"}
-                        name={"city"}
-                        value={userInfos.city}
-                        child={cities
-                            ?.sort((a, b) => a.name - b.name)
-                            ?.map((item, index) => {
-                                return (
-                                    <Picker.Item
-                                        key={index}
-                                        label={item}
-                                        value={item}
-                                        enabled={index != 0}
-                                    />
-                                );
-                            })}
-                        setValue={handleChange("city")}
-                    />
-                    <ErrorTextInput isClickedSubmit={isClickedSubmit} errorMessage={errors.city} />
-                </>
+                <DefaultDropDown
+                    label={"İl"}
+                    name={"city"}
+                    value={userInfos.city}
+                    child={cities
+                        ?.sort((a, b) => a.name - b.name)
+                        ?.map((item, index) => {
+                            return (
+                                <Picker.Item
+                                    key={index}
+                                    label={item}
+                                    value={item}
+                                    enabled={index != 0}
+                                />
+                            );
+                        })}
+                    setValue={handleChange("city")}
+                />
             )}
 
             <DefaultTextInput

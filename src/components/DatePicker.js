@@ -9,7 +9,6 @@ export const DefaultDatePicker = ({ label }) => {
     const { setValue } = helpers;
 
     const onChange = (event, selectedDate) => {
-        console.log(selectedDate);
         setValue(selectedDate);
     };
 

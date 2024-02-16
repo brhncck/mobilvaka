@@ -17,7 +17,6 @@ import UserForm from "../components/Form";
 import { getCountryNames } from "../service";
 import { useNavigation } from "@react-navigation/native";
 import * as yup from 'yup'
-import { DefaultDropDown } from "../components/DropDown";
 
 const HomeScreen = () => {
     const navigation = useNavigation();
@@ -41,12 +40,6 @@ const HomeScreen = () => {
 
         fullName: yup.string()
             .required('Ad Soyad alanı zorunludur.'),
-
-        country: yup.string()
-            .required('Ülke alanı zorunludur.'),
-
-        city: yup.string()
-            .required('Şehir alanı zorunludur.'),
 
         userId: yup.string()
             .required('Kimlik alanı zorunludur.'),
@@ -87,11 +80,26 @@ const HomeScreen = () => {
         setcvPath(result.assets[0].name);
     };
 
+    const clearForm = async (userInfos) => {
+        userInfos.imageSource = "";
+        userInfos.fullName = "";
+        userInfos.country = "";
+        userInfos.city = "";
+        userInfos.userId = "";
+        userInfos.phoneNumber = "";
+        userInfos.birthday = new Date();
+        userInfos.gender = "";
+        userInfos.jobInfo = "";
+        userInfos.educationInfo = "";
+        setImageSource("");
+        setcvPath("");
+        setIsReadKvkk(false);
+        setIsCheckedKvkk(false);
+    };
+
     useEffect(() => {
         (async () => setCountries(await getCountryNames()))();
     }, []);
-
-
 
     const saveUserInfo = async (userInfos) => {
         const response = await getData();
@@ -135,10 +143,13 @@ const HomeScreen = () => {
             return;
         }
 
-        storeData(userInfos).catch((e) => {
-            console.log("error on submit", e);
-            Alert.alert("Bir sorun oluştu. Lütfen tekrar deneyiniz..");
-        });
+        storeData(userInfos)
+            .then(() => clearForm(userInfos))
+            .catch((e) => {
+                console.log("error on submit", e);
+                Alert.alert("Bir sorun oluştu. Lütfen tekrar deneyiniz..");
+            });
+
 
         Alert.alert("Başırılı", "Kayıt başarıyla oluşturuldu.", [
             { text: "Tamam", onPress: () => navigation.navigate("Dashboard") },
@@ -165,7 +176,7 @@ const HomeScreen = () => {
                 initialValues={initialValues}
                 onSubmit={(values) => saveUserInfo(values)} validationSchema={validationSchema}>
 
-                {({ handleChange, handleSubmit, values, errors }) => (
+                {({ handleChange, handleSubmit, values, errors, resetForm }) => (
                     <>
                         <ScrollView showsVerticalScrollIndicator={false}>
                             <UserForm
@@ -180,6 +191,7 @@ const HomeScreen = () => {
                                 setIsReadKvkk={setIsReadKvkk}
                                 cvPath={cvPath}
                                 selectPdfFile={selectPdfFile}
+
                             />
                         </ScrollView>
                         <TouchableOpacity
@@ -187,7 +199,6 @@ const HomeScreen = () => {
                             onPress={() => {
                                 setIsClickedSubmit(true);
                                 handleSubmit();
-                                // resetForm();
                             }}>
                             <Text style={styles.buttonText}>Kaydet</Text>
                         </TouchableOpacity>
